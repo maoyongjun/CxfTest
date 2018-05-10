@@ -1,12 +1,19 @@
 package org.justin.cxfTest.servlet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletConfig;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxrs.spring.JAXRSServerFactoryBeanDefinitionParser.SpringJAXRSServerFactoryBean;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.Phase;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
+import org.justin.cxfTest.interceptor.MyJAXRSOutInterceptor;
 import org.justin.cxfTest.service.Service;
 import org.justin.cxfTest.service.Service2;
 import org.justin.cxfTest.service.impl.ServiceImpl;
@@ -25,11 +32,18 @@ public class MyCXFServlet extends CXFNonSpringServlet {
 		factory.setAddress("/soap");
 		factory.create();
 		
-		SpringJAXRSServerFactoryBean RestFactory = new SpringJAXRSServerFactoryBean();
-		RestFactory.setServiceClass(Service2.class);
-		RestFactory.setServiceBean(new ServiceImpl2());
-		RestFactory.setAddress("/rest");
-		RestFactory.create();
+		SpringJAXRSServerFactoryBean restFactory = new SpringJAXRSServerFactoryBean();
+		restFactory.setServiceClass(Service2.class);
+		restFactory.setServiceBean(new ServiceImpl2());
+		restFactory.setAddress("/rest");
+		List<Interceptor<? extends Message>> list = new ArrayList<Interceptor<? extends Message>>();
+//		SoapOutInterceptor interceptor = new SoapOutInterceptor();
+//		list.add(interceptor);
+		MyJAXRSOutInterceptor jAXRSOutInterceptor = new MyJAXRSOutInterceptor(Phase.PRE_STREAM);
+		list.add(jAXRSOutInterceptor);
+		restFactory.setInInterceptors(list);
+		restFactory.create();
+		
 	}
 	
 }
