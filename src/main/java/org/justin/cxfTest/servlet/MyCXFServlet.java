@@ -41,7 +41,7 @@ public class MyCXFServlet extends CXFNonSpringServlet {
 //		list.add(interceptor);
 		MyJAXRSOutInterceptor jAXRSOutInterceptor = new MyJAXRSOutInterceptor(Phase.PRE_STREAM);
 		list.add(jAXRSOutInterceptor);
-		restFactory.setInInterceptors(list);
+		restFactory.setOutInterceptors(list);
 		restFactory.create();
 		
 	}
