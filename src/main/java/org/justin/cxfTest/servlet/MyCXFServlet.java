@@ -23,12 +23,16 @@ public class MyCXFServlet extends CXFNonSpringServlet {
 
 	@Override
 	protected void loadBus(ServletConfig sc) {
+		List<Interceptor<? extends Message>> list = new ArrayList<Interceptor<? extends Message>>();
+		MyJAXRSOutInterceptor jAXRSOutInterceptor = new MyJAXRSOutInterceptor(Phase.PRE_STREAM);
+		list.add(jAXRSOutInterceptor);
 		super.loadBus(sc);
 		Bus bus =this.getBus();
 		BusFactory.setDefaultBus(bus);
 		ServerFactoryBean factory = new ServerFactoryBean();
 		factory.setServiceClass(Service.class);
 		factory.setServiceBean(new ServiceImpl());
+		factory.setOutInterceptors(list);
 		factory.setAddress("/soap");
 		factory.create();
 		
@@ -36,12 +40,8 @@ public class MyCXFServlet extends CXFNonSpringServlet {
 		restFactory.setServiceClass(Service2.class);
 		restFactory.setServiceBean(new ServiceImpl2());
 		restFactory.setAddress("/rest");
-		List<Interceptor<? extends Message>> list = new ArrayList<Interceptor<? extends Message>>();
-//		SoapOutInterceptor interceptor = new SoapOutInterceptor();
-//		list.add(interceptor);
-		MyJAXRSOutInterceptor jAXRSOutInterceptor = new MyJAXRSOutInterceptor(Phase.PRE_STREAM);
-		list.add(jAXRSOutInterceptor);
-		restFactory.setOutInterceptors(list);
+//		list.add(jAXRSOutInterceptor);
+//		restFactory.setOutInterceptors(list);
 		restFactory.create();
 		
 	}

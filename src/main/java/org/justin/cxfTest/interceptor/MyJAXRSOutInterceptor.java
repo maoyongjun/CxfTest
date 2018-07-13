@@ -52,7 +52,8 @@ public class MyJAXRSOutInterceptor extends AbstractPhaseInterceptor<Message> {
 			String xml = new String(baos1.toByteArray(), "utf-8");
 			xml = "<?xml version='1.0' encoding='UTF-8'?>" + xml;
 			xml = xml.replaceAll("soap:", "soapenv:").replaceAll(":soap", ":soapenv").replaceAll("ns2:", "ns:")
-					.replaceAll(":ns2", ":ns").replaceAll("return>", "ns:return>").replaceAll("&#xd;", "")
+					.replaceAll(":ns2", ":ns").replaceAll("ns1:", "ns:")
+					.replaceAll(":ns1", ":ns").replaceAll("<return", "<ns:return").replaceAll("return>", "ns:return>").replaceAll("&#xd;", "")
 					.replaceFirst("<soapenv:Body>", "<soapenv:Header/><soapenv:Body>");
 			// 这里对xml做处理，处理完后同理，写回流中
 			IOUtils.copy(new ByteArrayInputStream(xml.getBytes()), os);
